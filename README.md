@@ -26,8 +26,6 @@ The generated `tracking-plan.md` is both human-readable and machine-parseable. I
 - **Runbook** — actionable steps for every red flag
 - **Event properties** — schema for each tracked event
 
-Format spec: [`docs/tracking-plan-spec.md`](docs/tracking-plan-spec.md)
-
 ## Install
 
 ### Claude Code (30 seconds)
@@ -142,20 +140,6 @@ cd ~/.claude/skills/foggy-observe && git pull
 
 ```bash
 rm -rf ~/.claude/skills/foggy-observe
-```
-
-## Project structure
-
-```
-foggy-observe/
-  .claude/skills/
-    observe.md              # /observe skill (the core product)
-  docs/
-    tracking-plan-spec.md   # Tracking plan format spec v0.1
-    design-doc.md           # Product design document
-    deep-research.md        # Market research
-  BACKLOG.md                # Skill backlog
-  CLAUDE.md                 # Contributor guide
 ```
 
 ## Philosophy
