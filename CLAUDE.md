@@ -2,9 +2,7 @@
 
 ## What is this?
 
-Foggy Observe is a skill library for AI coding tools (Claude Code, Cursor, etc.) that generates personalized analytics and observability for vibe-coded products.
-
-The core skill is `/observe` (`.claude/skills/observe.md`). Skills share a common artifact: `tracking-plan.md` (the semantic layer).
+Foggy Observe is an AI coding skill that generates personalized analytics tracking for any product. The core skill is `/observe` (`.claude/skills/observe.md`). Skills share a common artifact: `tracking-plan.md` (the semantic layer).
 
 ## Repository Structure
 
