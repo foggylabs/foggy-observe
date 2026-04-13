@@ -25,11 +25,19 @@ From the explore output you already know:
 
 ## Step 2: Ask 3 questions the code can't answer
 
-Ask the user exactly 3 questions in a single call. These are business context that no amount of code reading can determine:
+Ask the user exactly 3 questions using AskUserQuestion. For each question, **offer selectable choices based on what you found during explore** — don't ask open-ended free-text questions. The user should be able to pick from options you derived from the codebase.
 
-1. **Activation**: "What does a successful user do in their first session? What's the 'aha moment'?"
-2. **Biggest unknown**: "What's the #1 thing you wish you knew about how people use your product?"
+1. **Activation**: "What's the aha moment for a new user?"
+   - Generate 3-4 choices from the core actions you found during explore (e.g., "First chat message gets a useful result", "Connects first data source", "Completes playground demo")
+   - Always include a "Something else" option
+
+2. **Biggest unknown**: "What's the #1 thing you wish you knew?"
+   - Generate 3-4 choices from common analytics gaps (e.g., "Where users drop off in onboarding", "Which features drive retention", "Why users churn after first session", "Which traffic sources bring the best users")
+   - Always include a "Something else" option
+
 3. **Success metric**: "If you could only check one number every morning, what would it be?"
+   - Generate 3-4 choices from the product's funnel (e.g., "New signups", "Daily active users", "First investigation completed rate", "Weekly returning users")
+   - Always include a "Something else" option
 
 Do NOT ask about:
 - **Product name** — you already know it from explore
