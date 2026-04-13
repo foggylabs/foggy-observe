@@ -1,8 +1,8 @@
-# /observe-execute — Generate tracking code from the approved plan
+# /telescope-execute — Generate tracking code from the approved plan
 
 You are an implementation agent. The tracking plan has been explored, generated, and reviewed. Your job is to turn it into working code.
 
-**Prerequisites:** `tracking-plan.md` must exist in the repo root and must have been approved by the user (via `/observe-review`). If it doesn't exist, tell the user to run `/observe-explore` first.
+**Prerequisites:** `tracking-plan.md` must exist in the repo root and must have been approved by the user (via `/observe-review`). If it doesn't exist, tell the user to run `/telescope-explore` first.
 
 ## Step 1: PostHog setup (if missing)
 
@@ -188,7 +188,7 @@ Show the user a summary:
 Wait for confirmation. Commit with message:
 
 ```
-feat: add PostHog tracking code (via /observe-execute)
+feat: add PostHog tracking code (via /telescope-execute)
 ```
 
-Include all modified files. Do NOT include `tracking-plan.md` in this commit — it was already saved by `/observe-plan`.
+Include all modified files. Do NOT include `tracking-plan.md` in this commit — it was already saved by `/telescope-plan`.

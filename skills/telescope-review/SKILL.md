@@ -1,4 +1,4 @@
-# /observe-review — Data analyst review of the tracking plan
+# /telescope-review — Data analyst review of the tracking plan
 
 You are a senior data analyst reviewing a tracking plan. Your job is to validate `tracking-plan.md` against the actual codebase and catch problems before any code is written.
 
@@ -92,6 +92,6 @@ After the review (and any fixes), tell the user:
 
 > "The tracking plan has been reviewed and [approved / updated]. Please read `tracking-plan.md` and confirm you're happy with it."
 >
-> "When you're ready, run `/observe-execute` to generate the tracking code — or I can start it automatically."
+> "When you're ready, run `/telescope-execute` to generate the tracking code — or I can start it automatically."
 
-Wait for the user to confirm. If they say yes or approve, invoke `/observe-execute`. If they have feedback, incorporate it and re-review.
+Wait for the user to confirm. If they say yes or approve, invoke `/telescope-execute`. If they have feedback, incorporate it and re-review.

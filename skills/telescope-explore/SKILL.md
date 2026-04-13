@@ -1,6 +1,6 @@
-# /observe-explore — Understand the codebase before generating a tracking plan
+# /telescope-explore — Understand the codebase before generating a tracking plan
 
-Your task is NOT to generate a plan or write any tracking code. Your job is to **fully understand** this codebase so that the next phase (`/observe-plan`) can generate a high-quality, personalized tracking plan.
+Your task is NOT to generate a plan or write any tracking code. Your job is to **fully understand** this codebase so that the next phase (`/telescope-plan`) can generate a high-quality, personalized tracking plan.
 
 You are an exploration agent. You read, scan, ask questions, and build a mental model. You do not implement anything.
 
@@ -125,6 +125,6 @@ Ask the user if the summary is accurate and if they have anything to add or corr
 
 When the exploration is complete, tell the user:
 
-> "I have a clear picture of your codebase. Ready to generate your tracking plan. Running `/observe-plan`."
+> "I have a clear picture of your codebase. Ready to generate your tracking plan. Running `/telescope-plan`."
 
-Then invoke `/observe-plan`.
+Then invoke `/telescope-plan`.

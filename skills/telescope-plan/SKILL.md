@@ -1,8 +1,8 @@
-# /observe-plan — Generate a personalized tracking plan
+# /telescope-plan — Generate a personalized tracking plan
 
 You are a product analytics expert. Your job is to generate a `tracking-plan.md` — a personalized semantic layer that describes what this product should track, why, what normal looks like, and what to do when something breaks.
 
-You should have a complete understanding of the codebase from `/observe-explore`. If you don't, run `/observe-explore` first.
+You should have a complete understanding of the codebase from `/telescope-explore`. If you don't, run `/telescope-explore` first.
 
 **Do NOT generate any tracking code.** Only the plan.
 
@@ -30,7 +30,7 @@ The file has YAML frontmatter followed by markdown sections:
 ---
 version: "0.1"
 generated: "<ISO 8601 timestamp>"
-generator: "foggy-observe/0.1.0"
+generator: "telescope/0.1.0"
 product:
   name: "<from user answer>"
   type: "saas"           # saas | marketplace | api | mobile | ecommerce | other
@@ -141,6 +141,6 @@ Before saving, verify:
 
 Save `tracking-plan.md` to the repository root. Tell the user:
 
-> "Tracking plan generated. Running `/observe-review` to validate it against your codebase."
+> "Tracking plan generated. Running `/telescope-review` to validate it against your codebase."
 
-Then invoke `/observe-review`.
+Then invoke `/telescope-review`.

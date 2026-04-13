@@ -1,8 +1,8 @@
-# Foggy Observe
+# Telescope
 
 Make your product observable in 15 minutes. AI skills that scan your codebase, generate a personalized tracking plan + tracking code, and commit it to your repo.
 
-No analytics experience needed. Run `/observe-explore` and follow the flow.
+No analytics experience needed. Run `/telescope-explore` and follow the flow.
 
 Works with Claude Code, Cursor, Codex, and any AI coding tool that supports custom skills.
 
@@ -14,15 +14,15 @@ Open your AI coding tool and paste this. The agent does the rest.
 
 **Claude Code:**
 
-> Install foggy-observe: run `git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git ~/.claude/skills/foggy-observe` then add a "Foggy Observe" section to CLAUDE.md that lists the available skills: `/observe-explore` — scan and understand your codebase, `/observe-plan` — generate a tracking plan, `/observe-review` — validate the plan, `/observe-execute` — generate tracking code. Start with `/observe-explore`.
+> Install telescope: run `git clone --single-branch --depth 1 https://github.com/foggylabs/telescope.git ~/.claude/skills/telescope` then add a "Telescope" section to CLAUDE.md that lists the available skills: `/telescope-explore` — scan and understand your codebase, `/telescope-plan` — generate a tracking plan, `/telescope-review` — validate the plan, `/telescope-execute` — generate tracking code. Start with `/telescope-explore`.
 
 **Cursor:**
 
-> Install foggy-observe: run `git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git .cursor/skills/foggy-observe` then add a "Foggy Observe" section to your project instructions that lists the available skills: `/observe-explore`, `/observe-plan`, `/observe-review`, `/observe-execute`. Start with `/observe-explore`.
+> Install telescope: run `git clone --single-branch --depth 1 https://github.com/foggylabs/telescope.git .cursor/skills/telescope` then add a "Telescope" section to your project instructions that lists the available skills: `/telescope-explore`, `/telescope-plan`, `/telescope-review`, `/telescope-execute`. Start with `/telescope-explore`.
 
 **Codex:**
 
-> Install foggy-observe: run `git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git ~/.codex/foggy-observe` then add a "Foggy Observe" section to AGENTS.md that lists the available skills: `/observe-explore`, `/observe-plan`, `/observe-review`, `/observe-execute`. Start with `/observe-explore`.
+> Install telescope: run `git clone --single-branch --depth 1 https://github.com/foggylabs/telescope.git ~/.codex/telescope` then add a "Telescope" section to AGENTS.md that lists the available skills: `/telescope-explore`, `/telescope-plan`, `/telescope-review`, `/telescope-execute`. Start with `/telescope-explore`.
 
 **Other AI coding tools:**
 
@@ -32,26 +32,26 @@ Copy the `skills/` directory into your tool's skill directory — or paste skill
 
 | Skill | What it does |
 |-------|-------------|
-| `/observe-explore` | Scan and understand your codebase — stack, routes, auth, payments, existing analytics. Builds a complete mental model before generating anything. |
-| `/observe-plan` | Generate `tracking-plan.md` — personalized funnel metrics, marketing attribution, infrastructure health, runbook, and event properties. |
-| `/observe-review` | Data analyst review — validates the plan against actual code paths, flags issues by severity, fixes problems before any code is written. |
-| `/observe-execute` | Generate tracking code — PostHog setup, event capture, first-touch attribution, revenue tracking, user identification. Commits to repo. |
+| `/telescope-explore` | Scan and understand your codebase — stack, routes, auth, payments, existing analytics. Builds a complete mental model before generating anything. |
+| `/telescope-plan` | Generate `tracking-plan.md` — personalized funnel metrics, marketing attribution, infrastructure health, runbook, and event properties. |
+| `/telescope-review` | Data analyst review — validates the plan against actual code paths, flags issues by severity, fixes problems before any code is written. |
+| `/telescope-execute` | Generate tracking code — PostHog setup, event capture, first-touch attribution, revenue tracking, user identification. Commits to repo. |
 
 ## The flow
 
 ```
-/observe-explore → /observe-plan → /observe-review → /observe-execute
-   understand        generate         validate          implement
+/telescope-explore → /telescope-plan → /telescope-review → /telescope-execute
+    understand          generate           validate            implement
 ```
 
 Each skill auto-triggers the next. You can also run any skill independently.
 
-The only user gate is after `/observe-review` — you read the tracking plan and confirm before code is generated.
+The only user gate is after `/telescope-review` — you read the tracking plan and confirm before code is generated.
 
 ## Usage
 
 ```
-/observe-explore
+/telescope-explore
 ```
 
 That's it. The pipeline runs from there. Takes about 15 minutes for a typical project.
@@ -92,20 +92,20 @@ Payment providers: Stripe, LemonSqueezy, Paddle, Polar
 ## Updating
 
 ```bash
-cd ~/.claude/skills/foggy-observe && git pull
+cd ~/.claude/skills/telescope && git pull
 ```
 
 ## Uninstall
 
 ```bash
-rm -rf ~/.claude/skills/foggy-observe
+rm -rf ~/.claude/skills/telescope
 ```
 
 ## Philosophy
 
 The vibe-coder doesn't need a dashboard. They need a colleague who watches their app and tells them what matters.
 
-The bottleneck isn't installing an SDK — PostHog's wizard does that in 90 seconds. The bottleneck is the **thinking work**: deciding what to track, why it matters, what normal looks like, and what to do when something breaks. That thinking work takes even an experienced PM about a week. Foggy Observe does it in 15 minutes.
+The bottleneck isn't installing an SDK — PostHog's wizard does that in 90 seconds. The bottleneck is the **thinking work**: deciding what to track, why it matters, what normal looks like, and what to do when something breaks. That thinking work takes even an experienced PM about a week. Telescope does it in 15 minutes.
 
 ## License
 
