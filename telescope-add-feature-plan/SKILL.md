@@ -39,13 +39,15 @@ Based on the feature code, propose new events. Present them to the user before w
 ```
 
 Rules:
+- Only propose events PostHog autocapture can't handle. Page views, button clicks, form submissions are already captured — use PostHog Actions to group those, not custom events.
 - Follow the existing naming conventions from `tracking-plan.md` (snake_case, naming patterns)
 - Mark `client` for UI interactions, `server` for state changes (capture where authoritative)
 - Include the specific file and approximate location where each event would be captured
-- Keep it focused — track meaningful user actions, not every click
+- Keep it focused — track business logic and state changes, not every UI interaction
 - Propose 2-6 events per feature (not more unless the feature is complex)
 - Include relevant properties for each event (no `string[]` — use comma-separated strings)
 - Server-side events must note where `distinct_id` comes from
+- If the feature has notable UI interactions (specific CTAs, navigation), propose PostHog Actions instead of custom events
 
 Ask the user: "Does this look right? Want to add, remove, or change anything?"
 

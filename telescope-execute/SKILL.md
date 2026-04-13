@@ -1,210 +1,131 @@
 # /telescope-execute — Generate tracking code from the approved plan
 
-You are an implementation agent. The tracking plan is a **semantic layer** that AI agents will use to understand this product's data. Your job is to turn it into working PostHog tracking code that produces clean, well-structured events matching the plan exactly.
+You are an implementation agent. Your job is to turn the approved `tracking-plan.md` into working PostHog code.
 
-The data quality matters: AI agents will query these events by name and property. If the code captures `signup_complete` but the plan says `user_signed_up`, the semantic layer is broken and every AI agent built on it fails.
+**Only implement what the plan specifies.** Do NOT add tracking for things PostHog handles automatically.
 
-**Prerequisites:** `tracking-plan.md` must exist in the repo root and must have been approved by the user (via `/telescope-review`). If it doesn't exist, tell the user to run `/telescope-explore` first.
+**Prerequisites:** `tracking-plan.md` must exist and be approved via `/telescope-review`.
+
+## What PostHog already does — DO NOT implement
+
+PostHog autocaptures these with zero code (after SDK init):
+- `$pageview` on every page/route change (with URL, referrer, UTMs, scroll depth)
+- `$pageleave` with scroll depth
+- `$autocapture` — clicks on buttons, links, forms, inputs (with element text, CSS selector)
+- UTM parameters, referrer, device info — all auto-captured as event properties
+- `$initial_referrer`, `$initial_utm_source`, etc. — auto-set as person properties
+- Session replay, heatmaps, web analytics — built-in, no code
+
+**Do NOT write `posthog.capture()` for page views, button clicks, form submissions, or marketing attribution.** PostHog handles all of this.
 
 ## Step 1: PostHog SDK setup (if missing)
 
-Check if PostHog SDK is installed in the project dependencies.
+Check if PostHog SDK is installed. If not:
 
-If **not installed**:
+1. Tell user to sign up at posthog.com (free — 1M events/month)
+2. Install SDK for the detected stack (posthog-js for frontend, posthog-python/posthog-node for backend)
+3. Ask user for their PostHog project API key
+4. Add initialization code to the correct entry point
 
-1. Tell the user: "You need a PostHog account (free — 1M events/month). Sign up at posthog.com if you haven't already."
-2. Install the SDK for the detected stack:
-   - **Frontend**: `posthog-js` (via npm/yarn/pnpm/bun based on lockfile)
-   - **Node.js backend**: `posthog-node`
-   - **Python backend**: `posthog` (via pip/uv)
-   - **Go backend**: `posthog-go`
-   - **Ruby backend**: `posthog-ruby`
-3. Ask the user for their PostHog project API key
-4. Add PostHog initialization code to the correct entry point
-
-**Critical init options** (read from the PostHog Configuration Notes in the plan):
-- `person_profiles: 'identified_only'` — always set this
-- `capture_pageview: 'history_change'` — for SPAs (React, Vue, Svelte with client-side routing)
+**Critical init options** (from the plan's PostHog Configuration section):
+- `person_profiles: 'identified_only'`
+- `capture_pageview: 'history_change'` — for SPAs
 - `cross_subdomain_cookie: true` — if product spans subdomains
-- `api_host: 'https://us.i.posthog.com'` (or `eu.i.posthog.com`)
+- `api_host: 'https://us.i.posthog.com'`
 
-Store the API key in an environment variable appropriate for the framework. Add the env var name to `.env.example` (create if needed).
-
-If PostHog is **already installed**: verify the init options match what the plan requires. Fix if needed.
+Store API key in an environment variable. Add to `.env.example`.
 
 ## Step 2: User identification
 
-This must be implemented BEFORE event tracking. Without it, all events are anonymous.
+Implement BEFORE custom events. Without this, all events are anonymous.
 
-**Client-side (`posthog-js`):**
-
-Call `posthog.identify()` on every authenticated page load and immediately after login/signup:
+**Client-side** — call on every authenticated page load and after login/signup:
 
 ```ts
 posthog.identify(userId, {
-  // $set properties (updated each time)
+  // $set — updated each time
   email: user.email,
   name: user.name,
-  // add other $set person properties from the plan
-})
-```
-
-Also set `$set_once` properties on signup:
-
-```ts
-posthog.identify(userId, {}, {
-  // $set_once properties (immutable)
+  // add other $set properties from the plan
+}, {
+  // $set_once — immutable, only set first time
   signup_method: 'google',
   signup_date: new Date().toISOString(),
+  // add other $set_once from the plan
 })
 ```
 
-**Server-side (`posthog-python` / `posthog-node`):**
+Call `posthog.reset()` on logout.
 
-Every server-side `capture()` call requires `distinct_id`. Get it from the authenticated session:
+**Server-side** — every `capture()` call needs `distinct_id` from the authenticated session.
 
-```python
-# Python
-posthog.capture(
-    distinct_id=request.user.id,  # from authenticated session
-    event='user_signed_up',
-    properties={ ... }
-)
-```
+## Step 3: Group analytics (for B2B / multi-tenant)
+
+If the plan defines group types:
 
 ```ts
-// Node.js
-posthog.capture({
-    distinctId: req.user.id,  // from authenticated session
-    event: 'user_signed_up',
-    properties: { ... }
-})
-```
-
-## Step 3: Group analytics (for multi-tenant / B2B)
-
-If the plan defines group types, implement `posthog.group()`:
-
-```ts
-// Client-side — call on login and project/workspace switch
+// Client-side — on login and group/project switch
 posthog.group('project', projectId, {
   name: projectName,
-  // add other group properties from the plan
+  // group properties from the plan
 })
 ```
 
 ```python
-# Server-side — include group in capture calls
+# Server-side — include in capture calls
 posthog.capture(
     distinct_id=user_id,
-    event='thread_created',
+    event='event_name',
     properties={ ... },
     groups={ 'project': project_id }
 )
 ```
 
-## Step 4: Generate event tracking code
+## Step 4: Custom event tracking code
 
-Read `tracking-plan.md`. For each custom event in the funnel metrics, generate tracking code.
+Read the plan's Custom Events section. For each event, generate a `posthog.capture()` call.
 
-**Client-side events** (`Capture: client` in the plan):
+**Client-side:**
 ```ts
-posthog.capture('event_name', {
-  property_1: value1,
-  property_2: value2,
-})
+posthog.capture('event_name', { property: value })
 ```
 
-**Server-side events** (`Capture: server` in the plan):
+**Server-side:**
 ```python
 posthog.capture(
     distinct_id=request.user.id,
     event='event_name',
-    properties={
-        'property_1': value1,
-        'property_2': value2,
-    }
+    properties={ 'property': value }
 )
 ```
 
-**Placement rules:**
-- Client: place in click handlers, form submit handlers, component effects
-- Server: place in route handlers, service methods, webhook handlers, background job completions
-- Follow the plan's `Capture` column — don't second-guess client vs server
+Place in the exact code paths the plan references. Match existing code style.
 
-**Do NOT duplicate autocapture events.** PostHog already captures:
-- `$pageview` (with URL, referrer, UTMs) on every page/route change
-- `$pageleave` (with scroll depth)
-- `$autocapture` (clicks on buttons/links/forms)
+## Step 5: PostHog Actions (document for manual setup)
 
-Only add custom `posthog.capture()` calls for events that autocapture doesn't cover.
+If the plan defines PostHog Actions, these are created in the PostHog UI — not in code. Add a comment or note in the tracking plan indicating which Actions need to be created manually:
 
-## Step 5: First-touch attribution
-
-Add first-touch attribution on the **client-side entry point** (runs on first visit, persists across sessions):
-
-```ts
-posthog.register_once({
-  first_touch_source: urlParams.get('utm_source') || getReferrerSource(document.referrer),
-  first_touch_medium: urlParams.get('utm_medium') || getReferrerMedium(document.referrer),
-  first_touch_campaign: urlParams.get('utm_campaign') || '',
-})
-```
-
-Also set as person properties on identify (so attribution survives across devices):
-
-```ts
-posthog.identify(userId, {}, {
-  // $set_once — only written on first identify
-  first_touch_source: firstTouchSource,
-  first_touch_medium: firstTouchMedium,
-  first_touch_campaign: firstTouchCampaign,
-})
-```
-
-Include referrer classification helpers:
-
-```ts
-function getReferrerSource(referrer: string): string {
-  if (!referrer) return 'direct'
-  const domain = new URL(referrer).hostname
-  if (domain.includes('google')) return 'google'
-  if (domain.includes('bing')) return 'bing'
-  if (domain.includes('twitter') || domain.includes('x.com')) return 'twitter'
-  if (domain.includes('reddit')) return 'reddit'
-  if (domain.includes('linkedin')) return 'linkedin'
-  if (domain.includes('producthunt')) return 'producthunt'
-  if (domain.includes('news.ycombinator')) return 'hackernews'
-  return domain
-}
-
-function getReferrerMedium(referrer: string): string {
-  if (!referrer) return 'none'
-  const domain = new URL(referrer).hostname
-  if (['google', 'bing', 'duckduckgo', 'yahoo'].some(s => domain.includes(s))) return 'organic'
-  if (['twitter', 'x.com', 'reddit', 'linkedin', 'facebook'].some(s => domain.includes(s))) return 'social'
-  return 'referral'
-}
+```markdown
+<!-- PostHog Actions to create in UI:
+- "Signup CTA clicked" — $autocapture where button text contains "Request access" OR "Get started"
+- "Pricing page viewed" — $pageview where URL contains /pricing
+-->
 ```
 
 ## Step 6: Review and commit
 
-Show the user a summary:
+Show the user:
 
 > **Tracking code generated.** Here's what I set up:
-> - PostHog SDK initialized with [config options]
-> - `posthog.identify()` on [login/signup/page load]
+> - PostHog SDK initialized with [config]
+> - `posthog.identify()` on [where]
 > - `posthog.group()` for [group type] (if applicable)
-> - **X custom events** across **Y funnel stages**
-> - First-touch attribution via `register_once()` + `$set_once`
+> - **X custom events** (only business logic — PostHog autocapture handles the rest)
+> - **Y PostHog Actions** to create in the UI
 > - **N files** modified
 >
 > Want me to commit?
 
-Wait for confirmation. Commit with message:
+Commit with: `feat: add PostHog tracking code (via /telescope-execute)`
 
-```
-feat: add PostHog tracking code (via /telescope-execute)
-```
-
-Include all modified files. Do NOT include `tracking-plan.md` in this commit — it was already saved by `/telescope-plan`.
+Do NOT include `tracking-plan.md` in this commit.
