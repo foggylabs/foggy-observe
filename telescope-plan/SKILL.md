@@ -23,12 +23,13 @@ From the explore output you already know:
 - All user actions worth tracking
 - Marketing pages and acquisition surface
 
-## Step 2: Ask only what the code can't tell you
+## Step 2: Ask 3 questions the code can't answer
 
-Ask the user **at most 1-2 questions** — only things the code genuinely can't answer:
+Ask the user exactly 3 questions in a single call. These are business context that no amount of code reading can determine:
 
-- **Activation**: "What does a successful user do in their first session? What's the 'aha moment'?" (business judgment, not in the code)
-- **Biggest unknown**: "What's the #1 thing you wish you knew about how people use your product?" (e.g., "where users drop off")
+1. **Activation**: "What does a successful user do in their first session? What's the 'aha moment'?"
+2. **Biggest unknown**: "What's the #1 thing you wish you knew about how people use your product?"
+3. **Success metric**: "If you could only check one number every morning, what would it be?"
 
 Do NOT ask about:
 - **Product name** — you already know it from explore
