@@ -1,24 +1,103 @@
 # Foggy Observe
 
-**Set up analytics for your product in 15 minutes.** One AI skill that scans your codebase, understands your business, and generates a personalized tracking plan + PostHog tracking code — committed directly to your repo.
+**Set up analytics for your product in 15 minutes.** An AI skill that scans your codebase, understands your business, and generates a personalized tracking plan + PostHog tracking code — committed directly to your repo.
 
 No analytics experience needed. No dashboard configuration. Just run `/observe` and answer 5 questions.
 
+Works with Claude Code, Cursor, Codex, and any AI coding tool that supports custom skills.
+
+## Install
+
+### Claude Code
+
+```bash
+git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git ~/.claude/skills/foggy-observe
+```
+
+### Cursor
+
+```bash
+git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git .cursor/skills/foggy-observe
+```
+
+Or copy the skill file directly into your project:
+
+```bash
+mkdir -p .cursor/skills
+curl -o .cursor/skills/observe.md https://raw.githubusercontent.com/foggylabs/foggy-observe/main/skills/observe/SKILL.md
+```
+
+### Codex
+
+```bash
+git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git ~/.codex/foggy-observe
+```
+
+### Other AI coding tools
+
+Copy `skills/observe/SKILL.md` into your tool's skill/instructions directory — or paste its contents as custom instructions.
+
+### Agent setup instructions
+
+If you're an AI agent setting up Foggy Observe for a user, follow these steps:
+
+1. Detect which AI coding tool is being used (Claude Code, Cursor, Codex, etc.)
+
+2. Clone the repo to the appropriate skills directory:
+   ```bash
+   # Claude Code
+   git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git ~/.claude/skills/foggy-observe
+
+   # Cursor
+   git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git .cursor/skills/foggy-observe
+
+   # Codex
+   git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git ~/.codex/foggy-observe
+   ```
+
+3. Verify the skill file exists:
+   ```bash
+   head -1 <install-path>/skills/observe/SKILL.md
+   ```
+   You should see: `# /observe — Set up PostHog tracking + generate a tracking plan`
+
+4. Add the following to the project's `CLAUDE.md` or equivalent instructions file:
+   ```markdown
+   ## Analytics
+
+   This project uses Foggy Observe for analytics. Run `/observe` to set up or update tracking.
+   ```
+
+5. Done. The user can now run `/observe` to set up analytics.
+
+## Usage
+
+```
+/observe
+```
+
+The skill walks you through the entire flow interactively. Takes about 15 minutes for a typical project.
+
+### Prerequisites
+
+- An AI coding tool (Claude Code, Cursor, Codex, or similar)
+- A [PostHog](https://posthog.com) account (free tier: 1M events/month) — the skill guides you through signup if you don't have one
+
 ## What it does
 
-`/observe` is a Claude Code skill that:
+`/observe` runs 7 phases:
 
 1. **Detects your stack** — framework, language, deployment, existing analytics
 2. **Sets up PostHog** — installs the SDK, adds initialization code (or detects existing setup)
 3. **Scans your codebase** — finds routes, auth flows, payment integrations, marketing pages
 4. **Asks 5 business questions** — product name, activation moment, revenue model, traffic sources, biggest unknown
-5. **Generates `tracking-plan.md`** — a personalized semantic layer with funnel metrics, marketing attribution, infrastructure health, runbook, and event properties
+5. **Generates `tracking-plan.md`** — personalized semantic layer with funnel metrics, marketing attribution, infrastructure health, runbook, and event properties
 6. **Generates tracking code** — `posthog.capture()` calls, first-touch attribution, revenue tracking, user identification — placed in the correct files
 7. **Commits everything** — tracking plan + code, ready to deploy
 
 ### The tracking plan
 
-The generated `tracking-plan.md` is both human-readable and machine-parseable. It covers:
+The generated `tracking-plan.md` is both human-readable and machine-parseable:
 
 - **Funnel metrics** — Acquisition, Activation, Engagement, Retention, Revenue (with normal ranges and red flags)
 - **Marketing attribution** — which channels bring users, revenue per visitor, first-touch/last-touch tracking
@@ -26,67 +105,18 @@ The generated `tracking-plan.md` is both human-readable and machine-parseable. I
 - **Runbook** — actionable steps for every red flag
 - **Event properties** — schema for each tracked event
 
-## Install
+## Supported stacks
 
-### Claude Code (30 seconds)
+| Framework | Language | PostHog SDK |
+|-----------|----------|-------------|
+| Next.js (App Router & Pages Router) | TypeScript/JavaScript | posthog-js |
+| React + Vite | TypeScript/JavaScript | posthog-js |
+| Express / Node.js | TypeScript/JavaScript | posthog-node |
+| Django / Flask | Python | posthog-python |
+| Rails | Ruby | posthog-ruby |
+| Go | Go | posthog-go |
 
-```bash
-git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git ~/.claude/skills/foggy-observe
-```
-
-That's it. The skill is now available as `/observe` in any Claude Code session.
-
-### Agent setup instructions
-
-If you're an AI agent setting up Foggy Observe for a user, follow these steps:
-
-1. Clone the skill repo into the user's Claude Code skills directory:
-   ```bash
-   git clone --single-branch --depth 1 https://github.com/foggylabs/foggy-observe.git ~/.claude/skills/foggy-observe
-   ```
-
-2. Verify the skill file exists:
-   ```bash
-   cat ~/.claude/skills/foggy-observe/.claude/skills/observe.md | head -5
-   ```
-   You should see: `# /observe — Set up PostHog tracking + generate a tracking plan`
-
-3. Add the following to the project's `CLAUDE.md` (create it if it doesn't exist):
-   ```markdown
-   ## Analytics
-
-   This project uses Foggy Observe for analytics. Run `/observe` to set up or update tracking.
-   ```
-
-4. Done. The user can now run `/observe` in their project to set up analytics.
-
-### Cursor
-
-Copy `.claude/skills/observe.md` from this repo into your project's `.cursor/skills/` directory (or equivalent skill location for your Cursor setup).
-
-### Manual install
-
-If you prefer not to clone, copy the raw skill file directly:
-
-```bash
-mkdir -p .claude/skills
-curl -o .claude/skills/observe.md https://raw.githubusercontent.com/foggylabs/foggy-observe/main/.claude/skills/observe.md
-```
-
-## Usage
-
-In any project with Claude Code:
-
-```
-/observe
-```
-
-The skill walks you through the entire flow interactively. It takes about 15 minutes for a typical project.
-
-### Prerequisites
-
-- [Claude Code](https://claude.ai/code) (latest)
-- A [PostHog](https://posthog.com) account (free tier: 1M events/month) — the skill will guide you through signup if you don't have one
+Payment providers: Stripe, LemonSqueezy, Paddle, Polar
 
 ## How it works
 
@@ -106,19 +136,6 @@ Your project                          What /observe generates
 └─────────────┘                       └──────────────────────────┘
 ```
 
-## Supported stacks
-
-| Framework | Language | PostHog SDK |
-|-----------|----------|-------------|
-| Next.js (App Router & Pages Router) | TypeScript/JavaScript | posthog-js |
-| React + Vite | TypeScript/JavaScript | posthog-js |
-| Express / Node.js | TypeScript/JavaScript | posthog-node |
-| Django / Flask | Python | posthog-python |
-| Rails | Ruby | posthog-ruby |
-| Go | Go | posthog-go |
-
-Payment providers: Stripe, LemonSqueezy, Paddle, Polar
-
 ## Roadmap
 
 | Skill | Description | Status |
@@ -133,13 +150,22 @@ Payment providers: Stripe, LemonSqueezy, Paddle, Polar
 ## Updating
 
 ```bash
-cd ~/.claude/skills/foggy-observe && git pull
+cd <install-path> && git pull
 ```
 
 ## Uninstall
 
+Remove the cloned directory:
+
 ```bash
+# Claude Code
 rm -rf ~/.claude/skills/foggy-observe
+
+# Cursor
+rm -rf .cursor/skills/foggy-observe
+
+# Codex
+rm -rf ~/.codex/foggy-observe
 ```
 
 ## Philosophy
