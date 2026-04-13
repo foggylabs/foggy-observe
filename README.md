@@ -12,11 +12,11 @@ Open your AI coding tool and paste this:
 
 **Claude Code:**
 
-> Install telescope: run `git clone --single-branch --depth 1 https://github.com/foggylabs/telescope.git ~/.claude/skills/telescope && cd ~/.claude/skills/telescope && ./setup` then add a "Telescope" section to CLAUDE.md that lists the available skills: `/telescope-explore` — scan and understand your codebase, `/telescope-plan` — generate a tracking plan, `/telescope-review` — validate the plan, `/telescope-execute` — generate tracking code, `/telescope-add-feature-plan` — add tracking for a new feature. Start with `/telescope-explore` for initial setup or `/telescope-add-feature-plan` for existing projects.
+> Install telescope: run `git clone --single-branch --depth 1 https://github.com/foggylabs/telescope.git ~/.claude/skills/telescope && cd ~/.claude/skills/telescope && ./bin/setup` then add a "Telescope" section to CLAUDE.md that lists the available skills: `/telescope-explore` — scan and understand your codebase, `/telescope-plan` — generate a tracking plan, `/telescope-review` — validate the plan, `/telescope-execute` — generate tracking code, `/telescope-add-feature-plan` — add tracking for a new feature. Start with `/telescope-explore` for initial setup or `/telescope-add-feature-plan` for existing projects.
 
 **Cursor / Codex / Other:**
 
-> Install telescope: run `git clone --single-branch --depth 1 https://github.com/foggylabs/telescope.git ~/.telescope && cd ~/.telescope && ./setup` then add a "Telescope" section to your instructions listing: `/telescope-explore`, `/telescope-plan`, `/telescope-review`, `/telescope-execute`, `/telescope-add-feature-plan`. Start with `/telescope-explore`.
+> Install telescope: run `git clone --single-branch --depth 1 https://github.com/foggylabs/telescope.git ~/.telescope && cd ~/.telescope && ./bin/setup` then add a "Telescope" section to your instructions listing: `/telescope-explore`, `/telescope-plan`, `/telescope-review`, `/telescope-execute`, `/telescope-add-feature-plan`. Start with `/telescope-explore`.
 
 ## Skills
 
@@ -59,7 +59,7 @@ Next.js, React + Vite, Express, Django, Flask, Rails, Go. Payment providers: Str
 ## Updating
 
 ```bash
-cd ~/.claude/skills/telescope && git pull && ./setup
+cd ~/.claude/skills/telescope && git pull && ./bin/setup
 ```
 
 ## Uninstall
