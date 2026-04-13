@@ -130,7 +130,40 @@ Example:
 
 Use Actions for: CTA clicks, specific page visits, form submissions, navigation events. These are things PostHog already captures — you're just giving them business-meaningful names.
 
-### Section 3: Identity & Groups (required)
+### Section 3: Marketing Attribution (required)
+
+This section is context for AI agents — no custom code needed. PostHog captures all of this automatically. Document it so AI agents know how to query attribution data.
+
+**What PostHog captures natively (auto-set person properties):**
+- `$initial_referrer` — full referrer URL on first-ever visit
+- `$initial_referring_domain` — domain of first referrer (e.g., "google.com", "t.co")
+- `$initial_utm_source`, `$initial_utm_medium`, `$initial_utm_campaign`, `$initial_utm_content`, `$initial_utm_term` — UTM params from first visit
+- `$initial_gclid`, `$initial_fbclid`, `$initial_msclkid` — ad click IDs from first visit
+
+**What PostHog captures on every pageview (event properties):**
+- `$referrer`, `$referring_domain` — current referrer
+- `$utm_source`, `$utm_medium`, `$utm_campaign` — current UTM params
+
+**Channel definitions** — how an AI agent should classify traffic:
+
+| Channel | How to identify (PostHog query) |
+|---------|-------------------------------|
+| Organic Search | `$initial_referring_domain` contains google, bing, duckduckgo, yahoo |
+| Paid Ads | `$initial_utm_medium` = "cpc" or "paid" or "ppc"; or `$initial_gclid` is set |
+| Social Media | `$initial_referring_domain` contains twitter, t.co, reddit, linkedin, facebook |
+| Direct | `$initial_referrer` is empty or "$direct" |
+| Referral | `$initial_referring_domain` is set and doesn't match search/social patterns |
+| Email | `$initial_utm_medium` = "email" |
+| Product Hunt | `$initial_referring_domain` contains producthunt.com |
+
+**How to query attribution:**
+- "Where do signups come from?" → Filter `user_signed_up` by person property `$initial_referring_domain` or `$initial_utm_source`
+- "Which channel has the best activation rate?" → Funnel: `user_signed_up` → `investigation_completed`, broken down by `$initial_utm_source`
+- "What's our organic search traffic?" → Filter `$pageview` by `$referring_domain` contains google/bing/duckduckgo
+
+No custom `register_once()` or `$set_once` needed for attribution — PostHog handles it all natively.
+
+### Section 4: Identity & Groups (required)
 
 **User identification:**
 - When to call `posthog.identify()` (on login, on signup, on page load when authenticated)
@@ -142,7 +175,7 @@ Use Actions for: CTA clicks, specific page visits, form submissions, navigation 
 - When to call `posthog.group()`
 - What group properties to set
 
-### Section 4: Event Properties (recommended)
+### Section 5: Event Properties (recommended)
 
 Schema for each **custom event** only. Under `## Event Properties`, add a subsection per event with a table:
 
@@ -158,7 +191,7 @@ Rules:
 - Do NOT document properties for autocaptured events — PostHog handles those
 - Do NOT re-capture UTMs, referrer, browser, device — PostHog does this automatically
 
-### Section 5: PostHog Configuration (required)
+### Section 6: PostHog Configuration (required)
 
 SDK configuration the execute phase needs:
 
