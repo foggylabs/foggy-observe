@@ -13,19 +13,26 @@ You should have a complete understanding of the codebase from `/telescope-explor
 
 **Do NOT generate any tracking code.** Only the plan.
 
-## Step 1: Business discovery
+## Step 1: Use what explore already found
 
-Ask the user these 5 questions. Use AskUserQuestion with all 5 in a single call:
+The explore phase already discovered the product name, stack, routes, auth, payments, core features, and marketing pages. **Read the explore summary from the conversation above.** Do not re-ask anything that was already answered.
 
-1. **Product basics**: "What's your product name and what does it do in one sentence?"
-2. **Activation**: "What does a successful user do in their first session? What's the 'aha moment'?"
-3. **Revenue**: "How do you make money (or plan to)? Which payment provider?"
-4. **Marketing channels**: "Where do your users come from? (e.g., Twitter/X, Reddit, Product Hunt, SEO, paid ads, newsletter)"
-5. **Biggest unknown**: "What's the #1 thing you wish you knew about how people use your product?"
+From the explore output you already know:
+- Product name and what it does
+- Revenue model and payment provider (or pre-revenue)
+- All user actions worth tracking
+- Marketing pages and acquisition surface
 
-Combine the answers with the codebase exploration to generate the plan.
+## Step 2: Ask only what the code can't tell you
 
-## Step 2: Generate tracking-plan.md
+Ask the user **only** the questions you genuinely cannot answer from the codebase. Typically this is 1-2 questions, not 5. Common ones:
+
+- **Activation**: "What does a successful user do in their first session? What's the 'aha moment'?" (business judgment, not in the code)
+- **Marketing channels**: "Where do your users come from?" (traffic sources aren't in the code)
+
+Do NOT ask about: product name (you know it), revenue model (you found it or it's pre-revenue), what the product does (you scanned it). If you can answer it from the explore output, don't ask.
+
+## Step 3: Generate tracking-plan.md
 
 Create `tracking-plan.md` in the repository root.
 
