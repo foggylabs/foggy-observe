@@ -24,7 +24,7 @@ Check if PostHog SDK is installed. If not:
 
 1. Tell user to sign up at posthog.com (free — 1M events/month)
 2. Install SDK for the detected stack (posthog-js for frontend, posthog-python/posthog-node for backend)
-3. Ask user for their PostHog project API key
+3. Ask user for their PostHog **project token** (find it at Settings > General > "Project token & ID" — starts with `phc_`)
 4. Add initialization code to the correct entry point
 
 **Critical init options** (from the plan's PostHog Configuration section):
