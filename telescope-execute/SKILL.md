@@ -130,6 +130,74 @@ posthog.capture(
 
 Place in the exact code paths the plan references. Match existing code style.
 
+## Common emission bugs — check these before committing
+
+These come from real dogfood incidents. Verify every generated capture call against each pattern before moving to verification.
+
+### 1. Timezone mismatch on `duration_seconds` and other time-delta properties
+
+Any property computed as `(datetime.now(...) - db_timestamp).total_seconds()` breaks if one side is naive and the other is aware. Python raises `TypeError: can't subtract offset-naive and offset-aware datetimes` — and because `posthog.capture()` is wrapped in a `try/except`, the error gets swallowed and **no event fires at all**. The user thinks tracking works. It doesn't.
+
+Real incident: `investigation_completed` never reached PostHog for a week because `Message.created_at` was SQLAlchemy `DateTime` (naive UTC) but the emitter used `datetime.now(UTC)` (aware). The defensive guard hid it.
+
+Before generating a time-delta property, inspect the source column's tz handling:
+
+- **SQLAlchemy**: `DateTime` (default) = naive UTC; `DateTime(timezone=True)` = aware.
+- **Raw SQL**: `TIMESTAMP` = naive; `TIMESTAMPTZ` = aware.
+- **Django**: `DateTimeField` under `USE_TZ=True` = aware; otherwise naive.
+- **Node ORMs (Prisma / Drizzle / TypeORM)**: JS `Date` is always tz-aware, but the DB column can still be naive — check the migration and the driver's conversion.
+
+Generate tz-matched code. Defensive normalization works regardless of source:
+
+```python
+now = datetime.now(UTC)
+if created_at.tzinfo is None:
+    now = now.replace(tzinfo=None)
+duration_seconds = max(0.0, (now - created_at).total_seconds())
+```
+
+### 2. Never bare-`except: pass` around `posthog.capture()`
+
+Analytics failures must not break the product — but **silent** failures are worse. They hide real bugs (like the TZ mismatch above) for weeks while the user believes tracking is healthy.
+
+**Wrong** — generates silent product data holes:
+
+```python
+try:
+    posthog.capture(...)
+except Exception:
+    pass
+```
+
+**Right** — preserves the "analytics never crashes prod" property AND surfaces emission bugs on day one:
+
+```python
+try:
+    posthog.capture(...)
+except Exception:
+    logger.warning("posthog capture failed for %s", event_name, exc_info=True)
+```
+
+Node / TypeScript:
+
+```ts
+try {
+  posthog.capture(...)
+} catch (err) {
+  logger.warn({ err, event: eventName }, "posthog capture failed")
+}
+```
+
+If the project has no obvious logger, use stdlib `logging.warning` or `console.warn` — anything but `pass`.
+
+### 3. After deploy, ask the user to watch logs for 24h
+
+Tell the user in Step 7's commit message or a follow-up:
+
+> For the next 24h, grep your server logs for `posthog capture failed`. Zero occurrences + non-zero events in PostHog's Activity feed = tracking healthy. Any warnings = emission bug — fix immediately before the gap ossifies into "we assumed this event was firing."
+
+This is the cheap bridge until a dashboard surfaces missing-event signals visually.
+
 ## Step 5: PostHog Actions — skip by default
 
 The plan may define PostHog Actions (UI groupings of autocaptured events). **Skip them in the execute phase.** The raw autocaptured data is already tracked and queryable — Actions are just dashboard shortcuts users discover later in PostHog's UI.
