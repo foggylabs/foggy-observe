@@ -48,7 +48,7 @@ For each event:
 1. **Is `posthog.identify()` called?** — Must be on login/signup and authenticated page loads. Critical if missing.
 2. **Is `posthog.reset()` called on logout?** — Required to prevent event leakage between users on shared devices. Flag as Important if missing.
 3. **Are person properties business-specific only?** — `$initial_referrer`, `$initial_utm_source` etc. are auto-set. Only add properties PostHog can't infer.
-4. **Are `$set` properties lightweight?** — Properties updated on every `identify()` call (every page load) must not require expensive DB queries. If a property needs a COUNT or JOIN to compute, it should be updated incrementally when the underlying data changes (e.g., on connector add/remove), not re-fetched on every page load. Flag as Important if heavy queries are needed per page load.
+4. **Are `$set` properties lightweight?** — Properties updated on every `identify()` call (every page load) must not require expensive DB queries. If a property needs a COUNT or JOIN to compute, it should be updated incrementally when the underlying data changes (e.g., on team-member add/remove, on item creation), not re-fetched on every page load. Flag as Important if heavy queries are needed per page load.
 5. **Is Group Analytics defined?** — Required for multi-tenant / B2B. Critical if missing.
 6. **Do server-side events specify `distinct_id` source?** — Critical if missing.
 
@@ -69,10 +69,10 @@ For each event:
 PostHog bills per event. Every custom event in the plan costs money. The plan should be **minimal and essential** in v1 — the user can add more later with `/telescope-add-feature-plan`.
 
 1. **Total custom event count** — Count events marked `client` or `server`. If more than **15**, flag as Important and recommend cuts. If more than 20, flag as Critical.
-2. **CRUD redundancy** — If the plan has multiple variants for the same entity (e.g., `automation_created`, `automation_toggled`, `automation_deleted`, `automation_edited`), flag as Important. Keep the most meaningful 1-2.
-3. **Power-user features** — Events for features only a small fraction of users touch (e.g., `model_changed`, `satellite_provisioned`, custom templates) should be cut from v1 unless they're the activation moment. Flag as Important.
-4. **Failure events before success confirmed** — Events like `investigation_failed`, `automation_run_failed` add noise before you've validated the success path. Flag as Minor and recommend adding them in a follow-up.
-5. **Detailed state changes** — Events like `connector_enabled`, `connector_disabled` should be consolidated into a single event with a property (e.g., `connector_configured` with `action: enabled|disabled`). Flag as Minor.
+2. **CRUD redundancy** — If the plan has multiple variants for the same entity (e.g., `item_created`, `item_edited`, `item_archived`, `item_deleted`), flag as Important. Keep the most meaningful 1-2 — usually creation, or the published/completed state.
+3. **Power-user features** — Events for features only a small fraction of users touch (e.g., `theme_changed`, `keyboard_shortcut_used`, `webhook_configured`, `api_key_rotated`) should be cut from v1 unless they're the activation moment. Flag as Important.
+4. **Failure events before success confirmed** — Events like `*_failed` (e.g., `payment_failed`, `upload_failed`, `task_failed`) add noise before you've validated the success path. Flag as Minor and recommend adding them in a follow-up.
+5. **Detailed state changes** — Events like `notification_enabled`, `notification_disabled` should be consolidated into a single event with a property (e.g., `notification_setting_changed` with `action: enabled|disabled`). Flag as Minor.
 
 For every event proposed, ask: "Does this answer the user's key question?" (from frontmatter). If not, and it's not on the activation funnel, cut it.
 

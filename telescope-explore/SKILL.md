@@ -132,7 +132,7 @@ Present your findings as a structured summary:
 - Payments: [yes/no/pre-revenue — note what payment integration exists, if any]
 ```
 
-**Critical: do NOT enumerate specific event names in this section.** That is `/telescope-plan`'s job. Explore identifies areas/domains; plan picks the minimal essential events (10-15 max) after asking the user the activation question. If you list specific event names here (e.g., `user_signed_up`, `connector_configured`, `investigation_started`), you anchor the plan to your guesses before scope discipline can be applied — and you may pre-commit to events PostHog autocaptures (page views, CTA clicks, form submits) that should never be custom events.
+**Critical: do NOT enumerate specific event names in this section.** That is `/telescope-plan`'s job. Explore identifies areas/domains; plan picks the minimal essential events (10-15 max) after asking the user the activation question. If you list specific event names here (e.g., `user_signed_up`, `item_created`, `payment_completed`), you anchor the plan to your guesses before scope discipline can be applied — and you may pre-commit to events PostHog autocaptures (page views, CTA clicks, form submits) that should never be custom events.
 
 Do NOT include a "Questions & Ambiguities" section unless there are genuine ambiguities that you cannot resolve by reading the code. If you have ambiguities, they should be specific: "I found two signup flows in `/auth/signup.ts` and `/api/register.ts` — which is the primary one?" Never ask open-ended questions like "should I track the backend?"
 

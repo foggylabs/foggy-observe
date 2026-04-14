@@ -2,7 +2,7 @@
 
 You are a product analytics expert. Your job is to generate a `tracking-plan.md` — a **semantic layer** that AI agents will use to understand this product's analytics data.
 
-This is not documentation for humans to read occasionally. It is structured context that AI agents (data analysts, SRE bots, MCP servers) will parse to:
+This is not documentation for humans to read occasionally. It is structured context that AI agents (data analysts, anomaly detection, MCP servers) will parse to:
 - Query PostHog with business context ("what happened to activation this week?")
 - Detect anomalies by comparing current data against expected patterns
 - Explain data ("this metric dropped because...")
@@ -108,16 +108,16 @@ Every custom event costs money (PostHog bills per event) and adds noise for AI a
 
 What "essential" means:
 - **Activation funnel** — every event on the path from signup to the activation moment (the user's answer to "what's the aha moment?"). Usually 4-6 events.
-- **Core engagement** — the 1-2 events that represent the product's core value (e.g., `investigation_completed`). Not every feature.
+- **Core engagement** — the 1-2 events that represent the product's core value (e.g., `post_published` for a CMS, `order_placed` for ecommerce, `message_sent` for a chat product, `task_completed` for a productivity tool). Not every feature.
 - **Conversion signals** — events that precede revenue or upgrade (quota hit, contact form, upgrade click).
 - **Team/viral signals** — if collaboration exists: invite sent, invite accepted. Skip if the product is single-player.
 
 What to SKIP in v1 (add later if needed):
-- Power-user features only a small fraction of users touch (e.g., `model_changed`, `satellite_provisioned`, `knowledge_entry_created` unless it's the activation moment)
-- Every CRUD variation (`automation_created`, `automation_toggled`, `automation_deleted`, `automation_edited` — pick the most meaningful 1-2)
-- Detailed state change events (`connector_enabled`, `connector_disabled` — consolidate into `connector_configured`)
-- Failure events at first — add `investigation_failed` etc. only after you've confirmed the success path works
-- Nice-to-have signals like `member_role_changed`, `project_renamed`
+- Power-user features only a small fraction of users touch (e.g., `theme_changed`, `keyboard_shortcut_used`, `api_key_rotated`, `webhook_configured`)
+- Every CRUD variation (`item_created`, `item_edited`, `item_archived`, `item_deleted` — pick the most meaningful 1-2, usually creation or the published/completed state)
+- Detailed state change events (`notification_enabled`, `notification_disabled` — consolidate into one event like `notification_setting_changed` with an `action: enabled|disabled` property)
+- Failure events at first — add `*_failed` events only after you've confirmed the success path works
+- Nice-to-have signals like `member_role_changed`, `workspace_renamed`, `avatar_updated`
 
 Rules:
 - Include autocaptured events where relevant — but mark them `auto` and include the filter/query an AI agent would use (URL, element text, etc.) — these are free to include since they cost nothing
@@ -176,7 +176,7 @@ This section is context for AI agents — no custom code needed. PostHog capture
 
 **How to query attribution:**
 - "Where do signups come from?" → Filter `user_signed_up` by person property `$initial_referring_domain` or `$initial_utm_source`
-- "Which channel has the best activation rate?" → Funnel: `user_signed_up` → `investigation_completed`, broken down by `$initial_utm_source`
+- "Which channel has the best activation rate?" → Funnel: `user_signed_up` → `<activation_event>`, broken down by `$initial_utm_source`
 - "What's our organic search traffic?" → Filter `$pageview` by `$referring_domain` contains google/bing/duckduckgo
 
 No custom `register_once()` or `$set_once` needed for attribution — PostHog handles it all natively.
