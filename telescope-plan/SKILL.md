@@ -43,19 +43,26 @@ PostHog captures these automatically with zero custom code. Do NOT create custom
 
 The explore phase already discovered the product name, stack, routes, auth, payments, core features, and marketing pages. **Read the explore summary from the conversation above.** Do not re-ask anything that was already answered.
 
-## Step 2: Ask 3 questions the code can't answer
+## Step 2: Ask 4 questions the code can't answer
 
-Ask the user exactly 3 questions using AskUserQuestion. For each question, **offer selectable choices based on what you found during explore** — don't ask open-ended free-text questions.
+Ask the user exactly 4 questions using AskUserQuestion. For each question, **offer selectable choices based on what you found during explore** — don't ask open-ended free-text questions.
 
-1. **Activation**: "What's the aha moment for a new user?"
+1. **Stage**: "Where is your product in its lifecycle?"
+   - "Pre-launch (no users yet)" → maps to `stage: pre_launch` — plan omits Retention and Revenue sections (no returning users to retain, no revenue funnel)
+   - "Has users, no revenue" → maps to `stage: has_users` — plan includes Retention, omits Revenue
+   - "Has paying users (manual billing or self-serve)" → maps to `stage: has_revenue` — plan includes Retention and Revenue
+   - Always include a "Something else" option
+   - Pre-fill the choice that matches what explore inferred from code (e.g., explore found Stripe → pre-fill "has paying users")
+
+2. **Activation**: "What's the aha moment for a new user?"
    - Generate 3-4 choices from the core actions found during explore
    - Always include a "Something else" option
 
-2. **Biggest unknown**: "What's the #1 thing you wish you knew?"
+3. **Biggest unknown**: "What's the #1 thing you wish you knew?"
    - Generate 3-4 choices from common analytics gaps
    - Always include a "Something else" option
 
-3. **Success metric**: "If you could only check one number every morning, what would it be?"
+4. **Success metric**: "If you could only check one number every morning, what would it be?"
    - Generate 3-4 choices from the product's funnel
    - Always include a "Something else" option
 
@@ -76,7 +83,7 @@ product:
   name: "<from explore>"
   type: "saas"           # saas | marketplace | api | mobile | ecommerce | other
   business_model: "subscription"  # subscription | freemium | transactional | ad_supported | free
-  stage: "pre_revenue"   # pre_revenue | has_users | has_revenue
+  stage: "has_users"     # pre_launch | has_users | has_revenue (from Q1)
 analytics:
   provider: "posthog"
   project_id: ""
@@ -100,7 +107,12 @@ The complete list of events an AI agent needs to understand the product's funnel
 | Capture | `auto` (PostHog handles it), `client` (custom frontend), or `server` (custom backend) |
 | Description | What this measures, why it matters, and how to query it (e.g., "filter $pageview by URL contains /pricing") |
 
-Stages: **Acquisition**, **Activation**, **Engagement**, **Retention**, **Revenue** (omit Revenue if `stage: pre_revenue`).
+Stages: **Acquisition**, **Activation**, **Engagement**, **Retention**, **Revenue**.
+
+Section inclusion is driven by `stage` (from Q1):
+- `pre_launch` → include Acquisition + Activation only. Skip Retention (no returning users yet) and Revenue (no payment flow). Plan focuses on getting tracking ready for launch day.
+- `has_users` → include Acquisition + Activation + Engagement + Retention. Skip Revenue.
+- `has_revenue` → include all five stages.
 
 **Scope: start minimal. Don't over-track.**
 

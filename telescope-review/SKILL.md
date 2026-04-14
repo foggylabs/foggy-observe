@@ -39,7 +39,7 @@ For each event:
 ### Frontmatter review
 
 1. **Is `business_model` accurate?** — Cross-reference with what explore found. If no payment provider is installed and billing is manual/"Contact us", it cannot be `"subscription"`. Use `"freemium"`, `"contact_sales"`, or `"free"` as appropriate. Flag as Important if wrong.
-2. **Is `stage` accurate?** — `pre_revenue` if no payment flow exists. `has_users` if users exist but no billing. `has_revenue` only if actual payment processing is in place.
+2. **Is `stage` accurate?** — `pre_launch` if no users exist yet (e.g., product not announced, no signups). `has_users` if users exist but no billing. `has_revenue` only if actual payment processing is in place. The plan asks the user directly in Q1, so this should match what they answered — flag if frontmatter contradicts the answer.
 3. **Is `activation_event` defined?** — The plan should specify which event is the activation moment. Flag as Important if missing.
 4. **Is `north_star_metric` defined?** — The plan should specify the one metric that matters most. Flag as Minor if missing.
 
@@ -62,7 +62,7 @@ For each event:
 
 1. **Does the onboarding flow capture user choices?** — If the product has an onboarding flow with multiple paths (e.g., "Get started" vs "Explore in Playground"), the plan MUST capture which path the user chose as a property. Flag as Important if the choice is lost.
 2. **Is there a retention signal?** — The plan should document how to measure DAU/WAU/MAU. Either a custom `user_returned` event or a note explaining how to query PostHog's built-in session analytics for returning users.
-3. **Are all funnel stages covered?** — Acquisition, Activation, Engagement, Retention are required. Revenue is required unless `stage: pre_revenue`.
+3. **Are all funnel stages covered?** — Required sections depend on `stage`: `pre_launch` requires Acquisition + Activation only; `has_users` adds Engagement + Retention; `has_revenue` adds Revenue. Flag if a required section is missing, or if a section is present that shouldn't be (e.g., Retention populated for a `pre_launch` product).
 
 ### Scope review — flag over-tracking
 
