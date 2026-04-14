@@ -47,13 +47,15 @@ The explore phase already discovered the product name, stack, routes, auth, paym
 
 Ask the user exactly 3 questions using AskUserQuestion. For each question, **offer selectable choices based on what you found during explore** — don't ask open-ended free-text questions.
 
-1. **Activation**: "What's the first moment a user gets real value from your product?"
-   - For SaaS: typically a core feature usage (e.g., first message sent, first task completed, first dashboard created)
-   - For e-commerce: typically first purchase, or first add-to-cart for higher-funnel activation
-   - For marketplace: first booking made, first listing posted
-   - For media/content: first piece of content consumed past a meaningful threshold (e.g., watched >30s, read >50%)
-   - For mobile apps: first session past onboarding completion
-   - Generate 3-4 choices from the core actions found during explore, tailored to the product type
+1. **Activation**: "What's the aha moment for a new user?"
+   - First, look at the product `type` from the explore summary and tailor the question and choices to that business type:
+     - SaaS: "the first feature usage that delivers value" — e.g., first message sent, first task completed, first dashboard created
+     - E-commerce: "the first purchase" — or first add-to-cart for higher-funnel activation
+     - Marketplace: "the first transaction" — first booking made, first listing posted, first inquiry sent
+     - Media/content: "the first meaningful consumption" — first video watched >30s, first article read >50%
+     - Mobile apps: "the first complete session past onboarding"
+     - Community: "the first contribution" — first post, comment, or reaction
+   - Generate 3-4 concrete choices from the core actions found during explore, framed in the product's own vocabulary
    - Always include a "Something else" option
 
 2. **Biggest unknown**: "What's the #1 thing you wish you knew?"
