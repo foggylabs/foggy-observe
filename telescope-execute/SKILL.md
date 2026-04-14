@@ -38,7 +38,29 @@ Check if PostHog SDK is installed. If not:
 - `cross_subdomain_cookie: true` — if product spans subdomains
 - `api_host: 'https://us.i.posthog.com'`
 
-Store API key in an environment variable. Add to `.env.example`.
+### Where to put the project token
+
+PostHog project tokens (`phc_*`) are **public by design**. They're rate-limited per project and meant to ship in client bundles — this is how PostHog's own copy-paste install snippet works. They are NOT secrets.
+
+Place the token differently depending on where the SDK runs:
+
+**Backend (posthog-python, posthog-node):** read from `POSTHOG_API_KEY` env var at runtime. Standard pattern, add to `.env.example`, load from the server's env. No build step involved.
+
+**Frontend (posthog-js in a build-compiled framework — Vite, Next.js, Remix, Astro, CRA, SvelteKit, Nuxt, etc.):** the token is inlined at **build time**, not runtime. This is the #1 way frontend tracking silently fails in production: the Dockerfile (or Cloudflare Workers / Vercel / Netlify build) runs `npm run build` in an environment that doesn't have `VITE_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_KEY` set, the bundle ships with an empty key, and every `posthog.capture` no-ops.
+
+To avoid this, **hardcode the project token in the frontend init file as a fallback**, with an env-var override for local dev:
+
+```ts
+// analytics.ts — PostHog project tokens are public by design, safe to commit.
+// Env var override lets local dev disable analytics (set to '') or swap projects.
+const DEFAULT_KEY = 'phc_...';  // paste the user's token here
+const ENV_KEY = import.meta.env.VITE_POSTHOG_KEY as string | undefined;  // or process.env.NEXT_PUBLIC_POSTHOG_KEY for Next.js
+const KEY = ENV_KEY ?? DEFAULT_KEY;
+```
+
+Do this for every frontend app in the repo — marketing site and console/app frontend are separate builds and each needs its own init. Ask the user for the token once, paste it into all frontend init files.
+
+Do NOT rely on runtime `.env` files (e.g. `.env.prod` mounted into a container) to set frontend build-time env vars — by the time the container starts, the bundle is already built and the key is already baked in (or not).
 
 ## Step 2: User identification
 
