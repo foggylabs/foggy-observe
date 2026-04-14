@@ -64,6 +64,18 @@ For each event:
 2. **Is there a retention signal?** — The plan should document how to measure DAU/WAU/MAU. Either a custom `user_returned` event or a note explaining how to query PostHog's built-in session analytics for returning users.
 3. **Are all funnel stages covered?** — Acquisition, Activation, Engagement, Retention are required. Revenue is required unless `stage: pre_revenue`.
 
+### Scope review — flag over-tracking
+
+PostHog bills per event. Every custom event in the plan costs money. The plan should be **minimal and essential** in v1 — the user can add more later with `/telescope-add-feature-plan`.
+
+1. **Total custom event count** — Count events marked `client` or `server`. If more than **15**, flag as Important and recommend cuts. If more than 20, flag as Critical.
+2. **CRUD redundancy** — If the plan has multiple variants for the same entity (e.g., `automation_created`, `automation_toggled`, `automation_deleted`, `automation_edited`), flag as Important. Keep the most meaningful 1-2.
+3. **Power-user features** — Events for features only a small fraction of users touch (e.g., `model_changed`, `satellite_provisioned`, custom templates) should be cut from v1 unless they're the activation moment. Flag as Important.
+4. **Failure events before success confirmed** — Events like `investigation_failed`, `automation_run_failed` add noise before you've validated the success path. Flag as Minor and recommend adding them in a follow-up.
+5. **Detailed state changes** — Events like `connector_enabled`, `connector_disabled` should be consolidated into a single event with a property (e.g., `connector_configured` with `action: enabled|disabled`). Flag as Minor.
+
+For every event proposed, ask: "Does this answer the user's key question?" (from frontmatter). If not, and it's not on the activation funnel, cut it.
+
 ### PostHog configuration review
 
 1. **SPA tracking configured?** — `capture_pageview: 'history_change'` for SPAs.

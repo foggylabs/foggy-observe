@@ -102,12 +102,30 @@ The complete list of events an AI agent needs to understand the product's funnel
 
 Stages: **Acquisition**, **Activation**, **Engagement**, **Retention**, **Revenue** (omit Revenue if `stage: pre_revenue`).
 
+**Scope: start minimal. Don't over-track.**
+
+Every custom event costs money (PostHog bills per event) and adds noise for AI agents. Start with the **minimum essential set** to answer the user's key questions. They can add more later with `/telescope-add-feature-plan` when they need deeper visibility.
+
+What "essential" means:
+- **Activation funnel** — every event on the path from signup to the activation moment (the user's answer to "what's the aha moment?"). Usually 4-6 events.
+- **Core engagement** — the 1-2 events that represent the product's core value (e.g., `investigation_completed`). Not every feature.
+- **Conversion signals** — events that precede revenue or upgrade (quota hit, contact form, upgrade click).
+- **Team/viral signals** — if collaboration exists: invite sent, invite accepted. Skip if the product is single-player.
+
+What to SKIP in v1 (add later if needed):
+- Power-user features only a small fraction of users touch (e.g., `model_changed`, `satellite_provisioned`, `knowledge_entry_created` unless it's the activation moment)
+- Every CRUD variation (`automation_created`, `automation_toggled`, `automation_deleted`, `automation_edited` — pick the most meaningful 1-2)
+- Detailed state change events (`connector_enabled`, `connector_disabled` — consolidate into `connector_configured`)
+- Failure events at first — add `investigation_failed` etc. only after you've confirmed the success path works
+- Nice-to-have signals like `member_role_changed`, `project_renamed`
+
 Rules:
-- Include autocaptured events where relevant — but mark them `auto` and include the filter/query an AI agent would use (URL, element text, etc.)
+- Include autocaptured events where relevant — but mark them `auto` and include the filter/query an AI agent would use (URL, element text, etc.) — these are free to include since they cost nothing
 - `server` for state changes (user created, payment completed, resource deleted) — the source of truth
 - `client` for business-specific UI events that autocapture can't distinguish (e.g., onboarding choice between two paths)
 - `auto` events get descriptions but NO code is generated for them
 - Events must map to actual code paths or pages found during exploration
+- **Target: 10-15 custom events max for v1.** If you're over 20, cut. The user can always add more later.
 
 ### Section 2: PostHog Actions (recommended)
 
